@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <title>Mock smart plug</title>
+<script>
+function baseWSProtocol() {
+	return (<%= testing %>) ?"ws" : "wss";
+}
+	
+function baseHTTPProtocol() {
+	return (<%= testing %>) ?"http" : "https";
+}
+	
+function baseURL() {
+	if (<%= testing %>) {
+		return "127.0.0.1:8090"
+	} else {
+		const paths = window.location.pathname.split("/");
+		if (paths.length > 1) {
+			if (paths[paths.length - 2] != "") {
+				pathname = `/${paths[paths.length - 2]}`;
+			}
+		}
+	return `${window.location.host}${pathname}`
+	}
+}
+window.addEventListener('load', function () {
+	console.log("creating websocket", `${baseWSProtocol()}://${baseURL()}/ui/ws`)
+	const socket = new WebSocket(`${baseWSProtocol()}://${baseURL()}/ui/ws`);
+
+	socket.onopen = function () {
+		console.log("successfully connected to server websocket")
+	}
+
+	socket.onclose = function () {
+		console.log("socket closed");
+		//if the ws is closed then refresh to reconect
+		//this gives live ui reload ;-) in the dev image
+		setTimeout(() => { window.location.reload(); }, 2000);
+	}
+
+	socket.onerror = function (err) {
+		console.log("socket error!");
+	}
+
+	socket.onmessage = function (msg) {
+		console.log("message, data: ", msg.data);
+		var data = JSON.parse(msg.data);
+		var plug = document.getElementById("plug");
+		if (data.data == 'on') {
+			plug.classList.add('on');
+			plug.classList.remove('off');
+		} else {
+			plug.classList.add('off');
+			plug.classList.remove('on');
+		}
+		plug.innerHTML = data.data;
+	}
+});
+</script>
+<style>
+.plug {
+	margin: 10pt;
+	border: solid #888 1px;
+	padding: 0.5em;
+	background: #eee;
+	font-family: Sans-serif;
+	font-size: 200%;
+	width: 100%;
+	min-height: 50%;
+	text-align: center;
+}
+.plug.on {
+	background: #fff;
+	color: #000;
+}
+.plug.off {
+	background: #000;
+	color: #fff;
+}
+</style>
+</head>
+<body>
+	<p>The mock smart plug is...</p>
+	<div id="plug" class="plug">?</div>
+</body>
+
+</html>

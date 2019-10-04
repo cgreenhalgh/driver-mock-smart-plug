@@ -1,0 +1,30 @@
+{
+    "manifest-version": 1,
+    "name": "driver-mock-smart-plug",
+    "version": "0.1.0",
+    "description": "mock smart plug, alternative to tplink smart plug driver",
+    "author": "chris.greenhalgh@nottingham.ac.uk",
+    "licence": "MIT",
+    "databox-type": "driver",
+    "tags": [
+    ],
+    "homepage": "https://github.com/cgreenhalgh/driver-mock-smart-plug",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cgreenhalgh/driver-mock-smart-plug"
+    },
+    "datasources": [],
+    "network-permissions": [],
+    "resource-requirements": {},
+    "export-whitelist": [],
+    "resource-requirements": {
+        "store": "core-store"
+    },
+    "provides": [
+        {
+            "data-source-type": "TP-SetPowerState",
+            "description": "Mock smart plug set power state",
+            "store-type": "ts/blob"
+        }
+    ]
+}
